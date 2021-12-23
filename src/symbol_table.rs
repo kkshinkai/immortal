@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use crate::symbol::Symbol;
+use std::sync::Once;
 
 pub struct SymbolTable {
     table: HashMap<&'static String, Symbol>,
@@ -30,5 +31,27 @@ impl SymbolTable {
         } as &'static _, id);
         self.store.push(contents);
         id
+    }
+}
+
+static mut SYMBOL_TABLE: Option<SymbolTable> = None;
+static ONCE: Once = Once::new();
+
+impl SymbolTable {
+    pub fn default() -> &'static mut SymbolTable {
+        unsafe {
+            ONCE.call_once(|| {
+                SYMBOL_TABLE = Some(SymbolTable::new());
+            });
+            SYMBOL_TABLE.as_mut().unwrap()
+        }
+    }
+
+    pub fn of(contents: String) -> Symbol {
+        Self::default().intern(contents)
+    }
+
+    pub fn get(symbol: Symbol) -> &'static str {
+        Self::default().store[symbol.id() as usize].as_str()
     }
 }
