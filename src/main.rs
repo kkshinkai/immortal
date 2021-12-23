@@ -1,13 +1,20 @@
-use crate::symbol::Symbol;
+use crate::symbol::{Symbol, SymbolTable};
+use std::iter::FromIterator;
 
 mod symbol;
 
 fn main() {
-    let s1 = Symbol::from("a".to_string());
-    let s2 = Symbol::from("b".to_string());
-    let s3 = Symbol::from("c".to_string());
-    let s4 = Symbol::from("a".to_string());
+    let worker_count = 100;
+    let handles =
+        (0..worker_count).map(|_n| {
+            std::thread::spawn(|| {
+                for i in 1..5 {
+                    Symbol::from(String::from_iter(std::iter::repeat("a").take(i)));
+                }
+            })
+        }).collect::<Vec<_>>();
 
-    println!("s1 = {}, s2 = {}, s3 = {}, s4 = {}", s1.to_string(), s2.to_string(), s3.to_string(), s4.to_string());
-    println!("s1.id = {}, s2.id = {}, s3.id = {}, s4.id = {}", s1.id(), s2.id(), s3.id(), s4.id());
+    handles.into_iter().for_each(|h| { let _ = h.join(); });
+
+    println!("{:?}", SymbolTable::default().lock().unwrap());
 }
