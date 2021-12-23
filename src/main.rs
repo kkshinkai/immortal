@@ -16,5 +16,5 @@ fn main() {
 
     handles.into_iter().for_each(|h| { let _ = h.join(); });
 
-    // println!("{:?}", SymbolTable::default().lock().unwrap());
+   symbol::debug_print_global_symbol_table();
 }

@@ -5,6 +5,11 @@ use std::fmt::Debug;
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
 pub struct Symbol(u32);
 
+pub fn debug_print_global_symbol_table() {
+    let mut table = SymbolTable::global_symbol_table().lock().unwrap();
+    println!("{:?}", *table);
+}
+
 impl Symbol {
     fn new(id: u32) -> Symbol { Symbol(id) }
     pub fn id(self) -> u32 { self.0 }
@@ -68,6 +73,6 @@ impl Debug for SymbolTable {
                 .map(|(i, s)| format!("#{} = \"{}\"", i, s))
                 .collect::<Vec<_>>()
                 .join("\n");
-        write!(f, "Symbol Table:\n{}\n", symbol_list)
+        write!(f, "{}", symbol_list)
     }
 }
