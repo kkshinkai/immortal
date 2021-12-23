@@ -1,4 +1,4 @@
-use crate::symbol::{Symbol, SymbolTable};
+use crate::symbol::Symbol;
 use std::iter::FromIterator;
 
 mod symbol;
@@ -16,5 +16,5 @@ fn main() {
 
     handles.into_iter().for_each(|h| { let _ = h.join(); });
 
-    println!("{:?}", SymbolTable::default().lock().unwrap());
+    // println!("{:?}", SymbolTable::default().lock().unwrap());
 }
